@@ -1,3 +1,5 @@
 #pragma once
 #define TAPPING_TERM 150
 #define TAPPING_TERM_PER_KEY
+#define COMBO_MUST_PRESS_IN_ORDER
+#define COMBO_TERM 125
