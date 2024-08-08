@@ -19,10 +19,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 enum layers {
   DEFAULT,
+  BASIC,
   RAISE,
   LOWER,
-  COMMANDS,
-  BASIC
+  COMMANDS
 };
 
 enum custom_keycodes {
@@ -32,6 +32,13 @@ enum custom_keycodes {
 enum combo_events {
   CMB_CTRL
 };
+
+const rgblight_segment_t PROGMEM white[] = RGBLIGHT_LAYER_SEGMENTS({5, 11, HSV_WHITE});
+const rgblight_segment_t PROGMEM pink[] = RGBLIGHT_LAYER_SEGMENTS({5, 11, HSV_TEAL});
+const rgblight_segment_t PROGMEM rgbLower[] = RGBLIGHT_LAYER_SEGMENTS({5, 11, HSV_TURQUOISE});
+const rgblight_segment_t PROGMEM rgbRaise[] = RGBLIGHT_LAYER_SEGMENTS({5, 11, HSV_SPRINGGREEN});
+const rgblight_segment_t PROGMEM rgbCommands[] = RGBLIGHT_LAYER_SEGMENTS({5, 11, HSV_CORAL});
+const rgblight_segment_t* const PROGMEM rgbLayers[] = RGBLIGHT_LAYERS_LIST(white, pink, rgbLower, rgbRaise, rgbCommands);
 
 const uint16_t PROGMEM ctrlCombo[] = { LCTL_T(KC_Z), KC_LGUI, COMBO_END };
 combo_t key_combos[] = {
@@ -45,7 +52,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         MO(COMMANDS), KC_TAB,  KC_Q,    KC_W,    KC_E,   KC_R,     KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,   KC_P,    KC_LBRC, KC_RBRC, KC_BSLS,  
         KC_TRNS, KC_ESC, LSFT_T(KC_A),    KC_S,    KC_D,   KC_F,     KC_G,    KC_H,    KC_J,    KC_K,    KC_L,   RSFT_T(KC_SCLN), KC_QUOT,          KC_ENT,  
         MO(LOWER),   TMUX_PREFIX, KC_NUBS, LCTL_T(KC_Z),    KC_X,    KC_C,   LALT_T(KC_V),     KC_B,    KC_N,    KC_N,    KC_M,   KC_COMM, KC_DOT, RCTL_T(KC_SLSH), KC_UP,   MO(COMMANDS), 
-        KC_LCTL, MO(LOWER),                  KC_LGUI, KC_SPC,   MO(RAISE),  KC_ENT,                                    KC_LEFT, KC_DOWN, KC_RIGHT
+        KC_LCTL, MO(LOWER),                  KC_LGUI, KC_SPC,   MO(RAISE),  TMUX_PREFIX,                                    KC_LEFT, KC_DOWN, KC_RIGHT
     ),
 
     [RAISE] = LAYOUT_hot(
@@ -60,7 +67,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_AUDIO_VOL_UP, KC_TRNS,  KC_TRNS,   KC_TRNS,   KC_TRNS,   KC_TRNS,   KC_TRNS,   KC_TRNS,   KC_TRNS,   KC_TRNS,   KC_TRNS,   KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS, KC_TRNS,
         KC_AUDIO_MUTE, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
         KC_AUDIO_VOL_DOWN, KC_TRNS, KC_TRNS, KC_LEFT, KC_UP, KC_DOWN, KC_RIGHT, KC_DEL, KC_HOME, KC_END, KC_PGUP, KC_PGDN, KC_TRNS,          KC_TRNS,
-        KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_LALT, KC_TRNS, KC_PRINT_SCREEN, KC_TRNS, KC_LEFT, KC_DOWN, KC_UP, KC_RIGHT, KC_TRNS, KC_TRNS, KC_TRNS,
+        KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_LALT, KC_TRNS, KC_PRINT_SCREEN, KC_LEFT, KC_DOWN, KC_UP, KC_RIGHT, KC_TRNS, KC_TRNS, KC_TRNS,
         KC_TRNS, KC_TRNS,                   KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,                                     KC_TRNS, KC_TRNS, KC_TRNS
     ),
 
@@ -69,7 +76,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
         TG(BASIC), KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,          KC_TRNS,
         KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
-        KC_TRNS, KC_TRNS,                   KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,                                     KC_TRNS, KC_TRNS, KC_TRNS
+        KC_TRNS, KC_TRNS,                   KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,                                     QK_UNDERGLOW_MODE_PREVIOUS, QK_UNDERGLOW_TOGGLE, QK_UNDERGLOW_MODE_NEXT
     ),
 
     [BASIC] = LAYOUT_hot(
@@ -81,6 +88,15 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
 
 };
+
+layer_state_t layer_state_set_user(layer_state_t state) {
+  if (rgblight_is_enabled()) {
+    rgblight_set_layer_state(2, layer_state_cmp(state, LOWER));
+    rgblight_set_layer_state(3, layer_state_cmp(state, RAISE));
+    rgblight_set_layer_state(4, layer_state_cmp(state, COMMANDS));
+  }
+  return state;
+}
 
 void  process_combo_event(uint16_t comboIndex, bool pressed) {
   switch (comboIndex) {
@@ -96,20 +112,33 @@ void  process_combo_event(uint16_t comboIndex, bool pressed) {
   }
 }
 
+void keyboard_post_init_user(void) {
+    rgblight_layers = rgbLayers;
+    rgblight_setrgb_range(0, 0, 0, 0, 5);
+}
+
+void  turnLayersOff(void) {
+  rgblight_set_layer_state(2, false);
+  rgblight_set_layer_state(3, false);
+  rgblight_set_layer_state(4, false);
+}
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   static uint16_t keyTimer;
 
   switch (keycode) {
+    case TG(BASIC):
+      if (record->event.pressed)
+        rgblight_blink_layer_repeat(1, 80, 5);
+    case LALT(KC_F10):
+      if (record->event.pressed) {
+        turnLayersOff();
+        rgblight_blink_layer_repeat(0, 80, 5);
+      }
+      break ;
     case TMUX_PREFIX:
-      /* if (record->event.pressed) { */
-      /*   keyTimer = timer_read(); */
-      /*   SEND_STRING(SS_DOWN(X_LSFT)); */
-      /* } else { */
-      /*   SEND_STRING(SS_UP(X_LSFT)); */
-      /*   if (keyTimer != 0 && timer_elapsed(keyTimer) < TAPPING_TERM) { */
-      SEND_STRING(SS_LCTL("a"));
-        /* } */
-      /* } */
+      if (record->event.pressed)
+        SEND_STRING(SS_LCTL("a"));
       break;
     default:
       if (keyTimer != 0)
