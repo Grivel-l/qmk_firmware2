@@ -155,8 +155,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       if (record->event.pressed) {
         layer_off(COMMANDS);
         rgblight_blink_layer_repeat(0, RGB_REPEAT_INTERVAL, 5);
+        register_code(KC_LEFT_ALT);
+        register_code(KC_F10);
+      } else {
+        unregister_code(KC_F10);
+        unregister_code(KC_LEFT_ALT);
       }
-      break ;
+      return false;
     case TMUX_PREFIX:
       if (record->event.pressed)
         SEND_STRING(SS_LCTL("a"));
